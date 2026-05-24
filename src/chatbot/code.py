@@ -39,7 +39,7 @@ def get_agent_executor():
                 db = SQLDatabase.from_uri(db_url)
 
             llm_endpoint = HuggingFaceEndpoint(
-                repo_id="deepseek-ai/DeepSeek-V4-Flash",
+                repo_id="meta-llama/Llama-3.3-70B-Instruct",
                 huggingfacehub_api_token=hf_api_
             )
             llm = ChatHuggingFace(llm=llm_endpoint)
