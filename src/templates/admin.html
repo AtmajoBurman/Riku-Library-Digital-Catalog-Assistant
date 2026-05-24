@@ -1,0 +1,1895 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Riku Library | Admin Control Center</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --font-family: 'Outfit', sans-serif;
+            --color-bg: #080c14;
+            --color-card-bg: rgba(16, 22, 37, 0.6);
+            --color-card-hover: rgba(25, 34, 56, 0.8);
+            --color-border: rgba(255, 255, 255, 0.07);
+            --color-border-active: rgba(99, 102, 241, 0.5);
+            --color-text-primary: #f3f4f6;
+            --color-text-secondary: #9ca3af;
+            --color-text-muted: #6b7280;
+            --grad-primary: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+            --grad-primary-hover: linear-gradient(135deg, #4f46e5 0%, #9333ea 100%);
+            --grad-success: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            --grad-danger: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%);
+            --grad-card-border: linear-gradient(135deg, rgba(99, 102, 241, 0.25) 0%, rgba(168, 85, 247, 0.25) 100%);
+            --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
+            --shadow-glow: 0 0 20px rgba(99, 102, 241, 0.25);
+            --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --border-radius-sm: 8px;
+            --border-radius-md: 12px;
+            --border-radius-lg: 16px;
+            --border-radius-full: 9999px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background-color: var(--color-bg);
+            color: var(--color-text-primary);
+            min-height: 100vh;
+            padding: 2.5rem 1.5rem;
+            position: relative;
+            overflow-x: hidden;
+            line-height: 1.5;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: -10%;
+            left: -10%;
+            width: 40%;
+            height: 50%;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, transparent 70%);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        body::after {
+            content: '';
+            position: absolute;
+            bottom: -10%;
+            right: -10%;
+            width: 50%;
+            height: 60%;
+            background: radial-gradient(circle, rgba(168, 85, 247, 0.12) 0%, transparent 70%);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .logo-icon {
+            width: 42px;
+            height: 42px;
+            background: var(--grad-primary);
+            border-radius: var(--border-radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow-glow);
+        }
+
+        .logo-icon svg {
+            fill: #fff;
+            width: 22px;
+            height: 22px;
+        }
+
+        .app-title {
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(to right, #ffffff, #a855f7);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .user-pill {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--color-border);
+            padding: 0.5rem 1rem;
+            border-radius: var(--border-radius-full);
+            font-size: 0.88rem;
+            color: var(--color-text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .role-badge {
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.15rem 0.5rem;
+            border-radius: var(--border-radius-full);
+            text-transform: uppercase;
+        }
+
+        .role-badge.admin {
+            background: rgba(168, 85, 247, 0.15);
+            color: #a855f7;
+            border: 1px solid rgba(168, 85, 247, 0.25);
+        }
+
+        .btn {
+            font-family: var(--font-family);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--border-radius-md);
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            border: none;
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: var(--grad-primary);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-primary:hover {
+            background: var(--grad-primary-hover);
+            box-shadow: var(--shadow-glow);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--color-border);
+            color: var(--color-text-primary);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background: rgba(244, 63, 94, 0.1);
+            border: 1px solid rgba(244, 63, 94, 0.2);
+            color: #f43f5e;
+        }
+
+        .btn-danger:hover {
+            background: rgba(244, 63, 94, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .glass-panel {
+            background: var(--color-card-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--color-border);
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow-sm);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            position: relative;
+            transition: var(--transition-smooth);
+        }
+
+        /* Control Panel welcome styling */
+        .welcome-card {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+        }
+
+        .welcome-text h2 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .welcome-text p {
+            font-size: 0.95rem;
+            color: var(--color-text-secondary);
+        }
+
+        .welcome-actions {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .stat-card {
+            padding: 1.5rem 1.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .stat-info h3 {
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--color-text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-number {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: #fff;
+        }
+
+        .stat-card.stat-available .stat-number {
+            background: linear-gradient(to right, #10b981, #34d399);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stat-card.stat-checkedout .stat-number {
+            background: linear-gradient(to right, #f43f5e, #fb7185);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stat-icon-box {
+            width: 52px;
+            height: 52px;
+            border-radius: var(--border-radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--color-border);
+        }
+
+        .stat-icon-box.total {
+            background: rgba(99, 102, 241, 0.05);
+            border-color: rgba(99, 102, 241, 0.15);
+            color: #6366f1;
+        }
+
+        .stat-icon-box.available {
+            background: rgba(16, 185, 129, 0.05);
+            border-color: rgba(16, 185, 129, 0.15);
+            color: #10b981;
+        }
+
+        .stat-icon-box.checkedout {
+            background: rgba(244, 63, 94, 0.05);
+            border-color: rgba(244, 63, 94, 0.15);
+            color: #f43f5e;
+        }
+
+        .stat-icon-box svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        /* Search Panel */
+        .search-panel {
+            padding: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .search-grid {
+            display: grid;
+            grid-template-columns: 2.5fr 1fr;
+            gap: 1.25rem;
+            margin-bottom: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .search-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .search-input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            color: var(--color-text-muted);
+            width: 20px;
+            height: 20px;
+            pointer-events: none;
+        }
+
+        .search-input {
+            font-family: var(--font-family);
+            width: 100%;
+            padding: 0.8rem 1rem 0.8rem 2.75rem;
+            background: rgba(0, 0, 0, 0.25);
+            border: 1px solid var(--color-border);
+            border-radius: var(--border-radius-md);
+            color: var(--color-text-primary);
+            font-size: 0.95rem;
+            transition: var(--transition-smooth);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--color-border-active);
+            box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.15);
+        }
+
+        .select-filter {
+            font-family: var(--font-family);
+            width: 100%;
+            padding: 0.8rem 1rem;
+            background: rgba(0, 0, 0, 0.25);
+            border: 1px solid var(--color-border);
+            border-radius: var(--border-radius-md);
+            color: var(--color-text-primary);
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%239ca3af'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 1.2em;
+        }
+
+        .select-filter:focus {
+            outline: none;
+            border-color: var(--color-border-active);
+            box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.15);
+        }
+
+        .date-filter-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            flex-wrap: wrap;
+            padding-top: 0.75rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        .date-filter-group {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .date-filter-group label {
+            font-size: 0.88rem;
+            font-weight: 500;
+            color: var(--color-text-secondary);
+        }
+
+        .date-picker-input {
+            font-family: var(--font-family);
+            background: rgba(0, 0, 0, 0.25);
+            border: 1px solid var(--color-border);
+            border-radius: var(--border-radius-md);
+            color: var(--color-text-primary);
+            padding: 0.5rem 0.85rem;
+            font-size: 0.88rem;
+            outline: none;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+        }
+
+        .date-picker-input::-webkit-calendar-picker-indicator {
+            filter: invert(1);
+            opacity: 0.6;
+            cursor: pointer;
+        }
+
+        .date-picker-input:focus {
+            border-color: var(--color-border-active);
+        }
+
+        .clear-btn {
+            font-family: var(--font-family);
+            font-size: 0.85rem;
+            padding: 0.4rem 0.85rem;
+            background: rgba(244, 63, 94, 0.1);
+            border: 1px solid rgba(244, 63, 94, 0.25);
+            color: #f43f5e;
+            border-radius: var(--border-radius-sm);
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            margin-left: auto;
+        }
+
+        .clear-btn:hover {
+            background: rgba(244, 63, 94, 0.2);
+        }
+
+        /* Catalog Layout */
+        .catalog-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .catalog-count {
+            font-size: 0.85rem;
+            padding: 0.25rem 0.6rem;
+            background: rgba(99, 102, 241, 0.15);
+            color: #818cf8;
+            border-radius: var(--border-radius-full);
+            border: 1px solid rgba(99, 102, 241, 0.25);
+        }
+
+        .books-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.75rem;
+            margin-bottom: 4rem;
+        }
+
+        /* Book Card Design */
+        .book-card {
+            padding: 1.75rem;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+            transition: var(--transition-smooth);
+        }
+
+        .book-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: var(--border-radius-lg);
+            padding: 1px;
+            background: var(--grad-card-border);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+            transition: var(--transition-smooth);
+        }
+
+        .book-card:hover {
+            transform: translateY(-5px);
+            background: var(--color-card-hover);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .book-card:hover::before {
+            background: var(--grad-primary);
+        }
+
+        .book-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 2rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .book-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #fff;
+            line-height: 1.3;
+        }
+
+        .availability-badge {
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.25rem 0.5rem;
+            border-radius: var(--border-radius-full);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            flex-shrink: 0;
+        }
+
+        .availability-badge.available {
+            background: rgba(16, 185, 129, 0.1);
+            color: #34d399;
+            border: 1px solid rgba(16, 185, 129, 0.25);
+        }
+
+        .availability-badge.checked-out {
+            background: rgba(244, 63, 94, 0.1);
+            color: #f43f5e;
+            border: 1px solid rgba(244, 63, 94, 0.25);
+        }
+
+        .chat-status-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .book-author {
+            font-size: 0.9rem;
+            color: #a855f7;
+            font-weight: 500;
+            margin-bottom: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+
+        .book-author svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        .book-description {
+            font-size: 0.92rem;
+            color: var(--color-text-secondary);
+            line-height: 1.6;
+            margin-bottom: 1.25rem;
+            flex-grow: 1;
+            display: -webkit-box;
+            -webkit-line-clamp: 4;
+            line-clamp: 4;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .book-footer {
+            margin-top: auto;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+        }
+
+        .date-box {
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+        }
+
+        .date-label {
+            font-size: 0.72rem;
+            color: var(--color-text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .date-value {
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--color-text-primary);
+        }
+
+        /* Red Negative Button Badge */
+        .delete-btn-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            width: 28px;
+            height: 28px;
+            background: rgba(244, 63, 94, 0.1);
+            border: 1px solid rgba(244, 63, 94, 0.3);
+            color: #f43f5e;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 5;
+            transition: var(--transition-smooth);
+        }
+
+        .delete-btn-badge:hover {
+            background: #f43f5e;
+            color: #fff;
+            transform: scale(1.1);
+            box-shadow: 0 0 10px rgba(244, 63, 94, 0.5);
+        }
+
+        .delete-btn-badge svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        /* Modal styling */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(4, 6, 10, 0.75);
+            backdrop-filter: blur(8px);
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-content {
+            width: 100%;
+            max-width: 500px;
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding-bottom: 0.75rem;
+        }
+
+        .modal-header h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .close-btn {
+            background: transparent;
+            border: none;
+            color: var(--color-text-secondary);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            line-height: 1;
+        }
+
+        .close-btn:hover {
+            color: #fff;
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-group label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--color-text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-input {
+            font-family: var(--font-family);
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--color-border);
+            border-radius: var(--border-radius-md);
+            color: var(--color-text-primary);
+            font-size: 0.95rem;
+            outline: none;
+            transition: var(--transition-smooth);
+        }
+
+        .form-input:focus {
+            border-color: var(--color-border-active);
+            box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.15);
+        }
+
+        .checkbox-group {
+            flex-direction: row;
+            align-items: center;
+            gap: 0.75rem;
+            cursor: pointer;
+            margin-top: 0.5rem;
+        }
+
+        .checkbox-group input {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: #6366f1;
+        }
+
+        .checkbox-group label {
+            cursor: pointer;
+            margin-bottom: 0;
+            text-transform: none;
+            letter-spacing: 0;
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.75rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding-top: 1.25rem;
+            margin-top: 1.5rem;
+        }
+
+        /* Spinner & buttons during load */
+        .spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            display: none;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .btn-danger {
+            background: rgba(244, 63, 94, 0.8);
+        }
+
+        .btn-danger:hover {
+            background: #f43f5e;
+            box-shadow: 0 0 15px rgba(244, 63, 94, 0.4);
+        }
+
+        .warning-text {
+            color: #f43f5e;
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+            font-weight: 500;
+        }
+
+        .char-counter {
+            font-size: 0.75rem;
+            color: var(--color-text-muted);
+            font-weight: 500;
+        }
+
+        /* Toast notifications */
+        #toast-container {
+            position: fixed;
+            top: 1.5rem;
+            right: 1.5rem;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            pointer-events: none;
+        }
+
+        .toast {
+            min-width: 300px;
+            max-width: 420px;
+            background: rgba(16, 22, 37, 0.92);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--color-border);
+            padding: 1rem 1.25rem;
+            border-radius: var(--border-radius-md);
+            color: var(--color-text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            box-shadow: var(--shadow-lg);
+            pointer-events: auto;
+            transform: translateX(120%);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast-success {
+            border-left: 4px solid #10b981;
+        }
+
+        .toast-error {
+            border-left: 4px solid #f43f5e;
+        }
+
+        .toast-info {
+            border-left: 4px solid #6366f1;
+        }
+
+        /* Empty search visual */
+        .empty-books-box {
+            padding: 3rem;
+            text-align: center;
+            border: 1px dashed var(--color-border);
+            border-radius: var(--border-radius-lg);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .empty-books-box svg {
+            width: 48px;
+            height: 48px;
+            color: var(--color-text-muted);
+        }
+
+        .empty-books-box h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .empty-books-box p {
+            color: var(--color-text-secondary);
+            font-size: 0.95rem;
+            max-width: 400px;
+        }
+
+        /* Loading skeleton design */
+        .skeleton {
+            min-height: 280px;
+            opacity: 0.5;
+            animation: pulse-anim 1.5s infinite alternate;
+        }
+
+        @keyframes pulse-anim {
+            0% {
+                opacity: 0.3;
+            }
+
+            100% {
+                opacity: 0.7;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <!-- Main header section -->
+        <header>
+            <div class="brand">
+                <div class="logo-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path
+                            d="M12 21c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-18C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 9h2v6h-2v-6zm0-4h2v2h-2V7z" />
+                    </svg>
+                </div>
+                <h1 class="app-title">Riku Library Admin Center</h1>
+            </div>
+
+            <div class="header-actions">
+                <div class="user-pill">
+                    <span class="chat-status-dot"
+                        style="width: 8px; height: 8px; background: #10b981; border-radius: 50%;"></span>
+                    <span>Logged in as: <strong>{{ user.username }}</strong></span>
+                    <span class="role-badge {{ user.role }}">{{ user.role }}</span>
+                </div>
+                <a href="{{ frontend_url }}" class="btn btn-secondary">Back to Catalog</a>
+                <a href="/logout" class="btn btn-danger" style="color: white;">Log Out</a>
+            </div>
+        </header>
+
+        <!-- Stats Grid Board -->
+        <section class="stats-grid">
+            <div class="stat-card glass-panel">
+                <div class="stat-info">
+                    <h3>Total Books</h3>
+                    <p class="stat-number" id="stat-total">--</p>
+                </div>
+                <div class="stat-icon-box total">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                        stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                    </svg>
+                </div>
+            </div>
+            <div class="stat-card glass-panel stat-available">
+                <div class="stat-info">
+                    <h3>Available</h3>
+                    <p class="stat-number" id="stat-available">--</p>
+                </div>
+                <div class="stat-icon-box available">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                        stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+            </div>
+            <div class="stat-card glass-panel stat-checkedout">
+                <div class="stat-info">
+                    <h3>Checked Out</h3>
+                    <p class="stat-number" id="stat-checkedout">--</p>
+                </div>
+                <div class="stat-icon-box checkedout">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                        stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+            </div>
+        </section>
+
+        <!-- Control Action Panel -->
+        <section class="glass-panel welcome-card">
+            <div class="welcome-text">
+                <h2>Control Panel</h2>
+                <p>Manage books catalog records, create new metadata entries, or review classified system properties.
+                </p>
+            </div>
+            <div class="welcome-actions">
+                <a href="/admin/secret" class="btn btn-secondary">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor" stroke-width="2.5">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                    </svg>
+                    Secret Chamber
+                </a>
+                <button class="btn btn-secondary" id="btn-change-password-trigger">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor" stroke-width="2.5">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M15 7a2 2 0 012 2m-5-4v14m-8-4h8m-8 0a6 6 0 1012 0v-6a6 6 0 10-12 0v6z" />
+                    </svg>
+                    Change Password
+                </button>
+                <button class="btn btn-primary" id="btn-add-book-trigger">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor" stroke-width="2.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                    </svg>
+                    Add Book
+                </button>
+            </div>
+        </section>
+
+        <!-- Advanced Search Filter Bar -->
+        <section class="glass-panel search-panel">
+            <div class="search-grid">
+                <div class="search-input-wrapper" id="search-input-container">
+                    <!-- Dynamic input injected via JS depending on filter criteria -->
+                </div>
+                <div>
+                    <select class="select-filter" id="search-type-select" aria-label="Search Criteria">
+                        <option value="title">Search by Name</option>
+                        <option value="author">Search by Author</option>
+                        <option value="created_at">Search by Date Created</option>
+                        <option value="updated_at">Search by Date Updated</option>
+                    </select>
+                </div>
+            </div>
+            <div class="date-filter-row">
+                <span id="search-helper-label" style="font-size: 0.85rem; color: var(--color-text-secondary);">
+                    Filtering catalog by title.
+                </span>
+                <button type="button" class="clear-btn" id="btn-clear-search" style="display: none;">
+                    Clear Filters
+                </button>
+            </div>
+        </section>
+
+        <!-- Catalog Section Grid -->
+        <section>
+            <h2 class="catalog-title">
+                Book Catalog
+                <span class="catalog-count" id="catalog-count-badge">--</span>
+            </h2>
+
+            <div class="books-grid" id="books-list-container">
+                <!-- Skeleton Loading Elements on Startup -->
+                <div class="glass-panel book-card skeleton"></div>
+                <div class="glass-panel book-card skeleton"></div>
+                <div class="glass-panel book-card skeleton"></div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Add Book Modal Overlay -->
+    <div class="modal-overlay" id="add-modal" aria-hidden="true" role="dialog">
+        <div class="modal-content glass-panel">
+            <div class="modal-header">
+                <h3>Add New Book</h3>
+                <button class="close-btn" id="close-add-modal">&times;</button>
+            </div>
+            <form id="add-book-form">
+                <div class="form-group">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <label for="add-title" style="margin-bottom: 0;">Title</label>
+                        <span class="char-counter" id="add-title-counter">0 / 120</span>
+                    </div>
+                    <input type="text" id="add-title" required class="form-input" placeholder="e.g. The Great Gatsby"
+                        maxlength="120">
+                </div>
+                <div class="form-group">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <label for="add-author" style="margin-bottom: 0;">Author</label>
+                        <span class="char-counter" id="add-author-counter">0 / 120</span>
+                    </div>
+                    <input type="text" id="add-author" required class="form-input"
+                        placeholder="e.g. F. Scott Fitzgerald" maxlength="120">
+                </div>
+                <div class="form-group">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <label for="add-isbn" style="margin-bottom: 0;">ISBN</label>
+                        <span class="char-counter" id="add-isbn-counter">0 / 120</span>
+                    </div>
+                    <input type="text" id="add-isbn" required class="form-input" placeholder="e.g. 978-0743273565"
+                        maxlength="120">
+                </div>
+                <div class="form-group">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <label for="add-description" style="margin-bottom: 0;">Description</label>
+                        <span class="char-counter" id="add-description-counter">0 / 200</span>
+                    </div>
+                    <textarea id="add-description" class="form-input" rows="3" placeholder="Provide book summary..."
+                        maxlength="200"></textarea>
+                </div>
+                <div class="form-group checkbox-group">
+                    <input type="checkbox" id="add-is-available" checked>
+                    <label for="add-is-available">Available for Checkout</label>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="btn-cancel-add">Cancel</button>
+                    <button type="submit" class="btn btn-primary" id="btn-save-add">
+                        <span class="btn-text">Create Record</span>
+                        <span class="spinner" id="add-spinner"></span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Book Modal Overlay -->
+    <div class="modal-overlay" id="edit-modal" aria-hidden="true" role="dialog">
+        <div class="modal-content glass-panel">
+            <div class="modal-header">
+                <h3>Update Book Record</h3>
+                <button class="close-btn" id="close-edit-modal">&times;</button>
+            </div>
+            <form id="edit-book-form">
+                <input type="hidden" id="edit-book-id">
+                <div class="form-group">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <label for="edit-title" style="margin-bottom: 0;">Title</label>
+                        <span class="char-counter" id="edit-title-counter">0 / 120</span>
+                    </div>
+                    <input type="text" id="edit-title" required class="form-input" maxlength="120">
+                </div>
+                <div class="form-group">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <label for="edit-author" style="margin-bottom: 0;">Author</label>
+                        <span class="char-counter" id="edit-author-counter">0 / 120</span>
+                    </div>
+                    <input type="text" id="edit-author" required class="form-input" maxlength="120">
+                </div>
+                <div class="form-group">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <label for="edit-isbn" style="margin-bottom: 0;">ISBN</label>
+                        <span class="char-counter" id="edit-isbn-counter">0 / 120</span>
+                    </div>
+                    <input type="text" id="edit-isbn" required class="form-input" maxlength="120">
+                </div>
+                <div class="form-group">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <label for="edit-description" style="margin-bottom: 0;">Description</label>
+                        <span class="char-counter" id="edit-description-counter">0 / 200</span>
+                    </div>
+                    <textarea id="edit-description" class="form-input" rows="3" maxlength="200"></textarea>
+                </div>
+                <div class="form-group checkbox-group">
+                    <input type="checkbox" id="edit-is-available">
+                    <label for="edit-is-available">Available for Checkout</label>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="btn-cancel-edit">Cancel</button>
+                    <button type="submit" class="btn btn-primary" id="btn-save-edit">
+                        <span class="btn-text">Save Changes</span>
+                        <span class="spinner" id="edit-spinner"></span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Custom Delete Confirmation Modal Overlay -->
+    <div class="modal-overlay" id="delete-modal" aria-hidden="true" role="dialog">
+        <div class="modal-content glass-panel">
+            <div class="modal-header">
+                <h3>Remove Catalog Entry</h3>
+                <button class="close-btn" id="close-delete-modal">&times;</button>
+            </div>
+            <div class="modal-body" style="padding: 1rem 0;">
+                <p>Are you sure you want to delete <strong id="delete-book-title-display"
+                        style="color: #fff;"></strong>?</p>
+                <p class="warning-text">This action removes the record permanently and cannot be reverted.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="btn-cancel-delete">Cancel</button>
+                <button type="button" class="btn btn-danger" id="btn-confirm-delete">
+                    <span class="btn-text">Confirm Delete</span>
+                    <span class="spinner" id="delete-spinner"></span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Change Password Modal Overlay -->
+    <div class="modal-overlay" id="password-modal" aria-hidden="true" role="dialog">
+        <div class="modal-content glass-panel">
+            <div class="modal-header">
+                <h3>Change Admin Password</h3>
+                <button class="close-btn" id="close-password-modal">&times;</button>
+            </div>
+            <form id="change-password-form">
+                <div class="modal-body" style="padding: 1.25rem 0;">
+                    <div class="form-group">
+                        <label for="change-new-password">New Password</label>
+                        <input type="password" id="change-new-password" required class="form-input"
+                            placeholder="Enter new password (min 8 chars)" minlength="8" autocomplete="new-password">
+                    </div>
+                    <div class="form-group" style="margin-top: 1.25rem;">
+                        <label for="change-confirm-password">Confirm Password</label>
+                        <input type="password" id="change-confirm-password" required class="form-input"
+                            placeholder="Confirm new password" minlength="8" autocomplete="new-password">
+                    </div>
+                </div>
+                <div class="modal-footer" style="margin-top: 0; padding-top: 1.25rem;">
+                    <button type="button" class="btn btn-secondary" id="btn-cancel-password">Cancel</button>
+                    <button type="submit" class="btn btn-primary" id="btn-save-password">
+                        <span class="btn-text">Update Password</span>
+                        <span class="spinner" id="password-spinner"></span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast alerts container -->
+    <div id="toast-container"></div>
+
+    <!-- JavaScript Actions & CRUD Controller -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            let books = [];
+            let searchQuery = '';
+            let searchType = 'title';
+
+            // Constants
+            const API_BASE = '';
+            const svgNS = "http://www.w3.org/2000/svg";
+
+            // DOM Elements
+            const booksListContainer = document.getElementById('books-list-container');
+            const searchInputContainer = document.getElementById('search-input-container');
+            const searchTypeSelect = document.getElementById('search-type-select');
+            const searchHelperLabel = document.getElementById('search-helper-label');
+            const btnClearSearch = document.getElementById('btn-clear-search');
+
+            // Modals & triggers
+            const addModal = document.getElementById('add-modal');
+            const editModal = document.getElementById('edit-modal');
+            const deleteModal = document.getElementById('delete-modal');
+            const passwordModal = document.getElementById('password-modal');
+
+            // Fetch & populate books catalog on startup
+            async function fetchCatalog() {
+                try {
+                    const res = await fetch(`${API_BASE}/books/`);
+                    if (!res.ok) {
+                        throw new Error(`Catalog load status: ${res.status}`);
+                    }
+                    books = await res.json();
+                    updateStats();
+                    renderBooks();
+                } catch (err) {
+                    console.error('Error fetching catalog:', err);
+                    showToast('Could not sync with catalog database.', 'error');
+                }
+            }
+
+            // Toast Alerts helper
+            function showToast(message, type = 'success') {
+                const container = document.getElementById('toast-container');
+                const toast = document.createElement('div');
+                toast.className = `toast toast-${type}`;
+
+                const icon = document.createElement('span');
+                icon.style.fontWeight = 'bold';
+                icon.style.fontSize = '1.1rem';
+                if (type === 'success') {
+                    icon.textContent = '✓';
+                    icon.style.color = '#10b981';
+                } else if (type === 'error') {
+                    icon.textContent = '✗';
+                    icon.style.color = '#f43f5e';
+                } else {
+                    icon.textContent = 'ℹ';
+                    icon.style.color = '#6366f1';
+                }
+                toast.appendChild(icon);
+
+                const text = document.createElement('span');
+                text.textContent = message;
+                toast.appendChild(text);
+
+                container.appendChild(toast);
+                setTimeout(() => toast.classList.add('show'), 10);
+
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                    setTimeout(() => toast.remove(), 300);
+                }, 4000);
+            }
+
+            // Stats calculator
+            function updateStats() {
+                const total = books.length;
+                const available = books.filter(b => b.is_available).length;
+                const checkedOut = total - available;
+
+                document.getElementById('stat-total').textContent = total;
+                document.getElementById('stat-available').textContent = available;
+                document.getElementById('stat-checkedout').textContent = checkedOut;
+
+                document.getElementById('catalog-count-badge').textContent = `${total} ${total === 1 ? 'book' : 'books'}`;
+            }
+
+            // Format date string safely
+            function formatDate(dateString) {
+                if (!dateString) return 'N/A';
+                try {
+                    const date = new Date(dateString);
+                    return date.toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'short',
+                        day: '2-digit'
+                    });
+                } catch (e) {
+                    return dateString;
+                }
+            }
+
+            // Filter logic
+            function getFilteredBooks() {
+                if (!searchQuery) return books;
+                return books.filter((book) => {
+                    if (searchType === 'title') {
+                        return book.title.toLowerCase().includes(searchQuery.toLowerCase());
+                    }
+                    if (searchType === 'author') {
+                        return book.author.toLowerCase().includes(searchQuery.toLowerCase());
+                    }
+                    if (searchType === 'created_at' || searchType === 'updated_at') {
+                        const isoString = book[searchType];
+                        if (!isoString) return false;
+                        const itemDatePart = isoString.split('T')[0];
+                        return itemDatePart === searchQuery;
+                    }
+                    return true;
+                });
+            }
+
+            // Render book cards into catalog
+            function renderBooks() {
+                const filtered = getFilteredBooks();
+                booksListContainer.replaceChildren();
+
+                if (filtered.length === 0) {
+                    const emptyBox = document.createElement('div');
+                    emptyBox.className = 'empty-books-box glass-panel';
+                    emptyBox.style.gridColumn = '1 / -1';
+
+                    const doc = new DOMParser().parseFromString(
+                        '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>',
+                        'image/svg+xml'
+                    );
+                    emptyBox.appendChild(doc.documentElement);
+
+                    const title = document.createElement('h3');
+                    title.textContent = 'No matching books found';
+                    emptyBox.appendChild(title);
+
+                    const subtitle = document.createElement('p');
+                    subtitle.textContent = 'No records matching the search filter criteria were found. Readjust the parameters above.';
+                    emptyBox.appendChild(subtitle);
+
+                    booksListContainer.appendChild(emptyBox);
+                    return;
+                }
+
+                filtered.forEach(book => {
+                    const card = createCardElement(book);
+                    booksListContainer.appendChild(card);
+                });
+            }
+
+            // Dynamic card creator helper
+            function createCardElement(book) {
+                const article = document.createElement('article');
+                article.className = 'glass-panel book-card';
+                article.id = `book-card-${book.uid}`;
+
+                // Delete trigger badge (Red negative minus sign badge inside the card)
+                const deleteBadge = document.createElement('button');
+                deleteBadge.className = 'delete-btn-badge';
+                deleteBadge.setAttribute('aria-label', `Delete book: ${book.title}`);
+
+                const delSvg = document.createElementNS(svgNS, 'svg');
+                delSvg.setAttribute('fill', 'none');
+                delSvg.setAttribute('viewBox', '0 0 24 24');
+                delSvg.setAttribute('stroke', 'currentColor');
+                delSvg.setAttribute('stroke-width', '3');
+
+                const delPath = document.createElementNS(svgNS, 'path');
+                delPath.setAttribute('stroke-linecap', 'round');
+                delPath.setAttribute('stroke-linejoin', 'round');
+                delPath.setAttribute('d', 'M20 12H4');
+
+                delSvg.appendChild(delPath);
+                deleteBadge.appendChild(delSvg);
+
+                deleteBadge.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    openDeleteModal(book);
+                });
+                article.appendChild(deleteBadge);
+
+                // Book Card Header
+                const header = document.createElement('div');
+                header.className = 'book-header';
+
+                const title = document.createElement('h3');
+                title.className = 'book-title';
+                title.textContent = book.title;
+                header.appendChild(title);
+
+                const statusBadge = document.createElement('span');
+                statusBadge.className = `availability-badge ${book.is_available ? 'available' : 'checked-out'}`;
+
+                const statusDot = document.createElement('span');
+                statusDot.className = 'chat-status-dot';
+                statusDot.style.backgroundColor = book.is_available ? '#10b981' : '#f43f5e';
+                statusDot.style.boxShadow = `0 0 6px ${book.is_available ? '#10b981' : '#f43f5e'}`;
+
+                statusBadge.appendChild(statusDot);
+                statusBadge.appendChild(document.createTextNode(book.is_available ? 'Available' : 'Checked Out'));
+                header.appendChild(statusBadge);
+                article.appendChild(header);
+
+                // Book Card Author
+                const author = document.createElement('div');
+                author.className = 'book-author';
+
+                const authSvg = document.createElementNS(svgNS, 'svg');
+                authSvg.setAttribute('fill', 'none');
+                authSvg.setAttribute('viewBox', '0 0 24 24');
+                authSvg.setAttribute('stroke', 'currentColor');
+                authSvg.setAttribute('stroke-width', '2');
+
+                const authPath = document.createElementNS(svgNS, 'path');
+                authPath.setAttribute('stroke-linecap', 'round');
+                authPath.setAttribute('stroke-linejoin', 'round');
+                authPath.setAttribute('d', 'M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z');
+
+                authSvg.appendChild(authPath);
+                author.appendChild(authSvg);
+                author.appendChild(document.createTextNode(book.author));
+                article.appendChild(author);
+
+                // Description
+                const desc = document.createElement('p');
+                desc.className = 'book-description';
+                desc.textContent = book.description || 'No description provided.';
+                article.appendChild(desc);
+
+                // ISBN info
+                const isbnGroup = document.createElement('div');
+                isbnGroup.style.fontSize = '0.85rem';
+                isbnGroup.style.color = 'var(--color-text-secondary)';
+                isbnGroup.style.marginBottom = '1.25rem';
+
+                const isbnLbl = document.createElement('strong');
+                isbnLbl.textContent = 'ISBN: ';
+                isbnGroup.appendChild(isbnLbl);
+                isbnGroup.appendChild(document.createTextNode(book.isbn));
+                article.appendChild(isbnGroup);
+
+                // Edit Button Trigger
+                const editBtn = document.createElement('button');
+                editBtn.className = 'btn btn-secondary';
+                editBtn.style.width = '100%';
+                editBtn.style.marginBottom = '1rem';
+                editBtn.style.fontSize = '0.88rem';
+                editBtn.style.padding = '0.5rem 1rem';
+                editBtn.textContent = 'Edit Book Record';
+                editBtn.addEventListener('click', () => openEditModal(book));
+                article.appendChild(editBtn);
+
+                // Dates Footer
+                const footer = document.createElement('div');
+                footer.className = 'book-footer';
+
+                footer.appendChild(createDateBox('Created', formatDate(book.created_at)));
+                footer.appendChild(createDateBox('Updated', formatDate(book.updated_at)));
+                article.appendChild(footer);
+
+                return article;
+            }
+
+            function createDateBox(label, dateStr) {
+                const box = document.createElement('div');
+                box.className = 'date-box';
+
+                const lbl = document.createElement('span');
+                lbl.className = 'date-label';
+                lbl.textContent = label;
+
+                const val = document.createElement('span');
+                val.className = 'date-value';
+                val.textContent = dateStr;
+
+                box.appendChild(lbl);
+                box.appendChild(val);
+                return box;
+            }
+
+            // Modal overlay helpers
+            function toggleModal(modal, active) {
+                if (active) {
+                    modal.classList.add('active');
+                    modal.setAttribute('aria-hidden', 'false');
+                } else {
+                    modal.classList.remove('active');
+                    modal.setAttribute('aria-hidden', 'true');
+                }
+            }
+
+            // Character limits configuration
+            const charLimitConfig = {
+                'add-title': { limit: 120, counterId: 'add-title-counter' },
+                'add-author': { limit: 120, counterId: 'add-author-counter' },
+                'add-isbn': { limit: 120, counterId: 'add-isbn-counter' },
+                'add-description': { limit: 200, counterId: 'add-description-counter' },
+                'edit-title': { limit: 120, counterId: 'edit-title-counter' },
+                'edit-author': { limit: 120, counterId: 'edit-author-counter' },
+                'edit-isbn': { limit: 120, counterId: 'edit-isbn-counter' },
+                'edit-description': { limit: 200, counterId: 'edit-description-counter' }
+            };
+
+            function updateCounter(inputId) {
+                const input = document.getElementById(inputId);
+                const config = charLimitConfig[inputId];
+                if (!input || !config) return;
+                const counter = document.getElementById(config.counterId);
+                if (counter) {
+                    const currentLength = input.value.length;
+                    counter.textContent = `${currentLength} / ${config.limit}`;
+                }
+            }
+
+            // Register input event listeners for real-time tracking
+            Object.keys(charLimitConfig).forEach(inputId => {
+                const input = document.getElementById(inputId);
+                if (input) {
+                    input.addEventListener('input', () => updateCounter(inputId));
+                }
+            });
+
+            // Helper to update all counters in a form
+            function updateAllCounters(prefix) {
+                Object.keys(charLimitConfig).forEach(inputId => {
+                    if (inputId.startsWith(prefix)) {
+                        updateCounter(inputId);
+                    }
+                });
+            }
+
+            // Add Book Flow
+            document.getElementById('btn-add-book-trigger').addEventListener('click', () => {
+                document.getElementById('add-book-form').reset();
+                updateAllCounters('add-');
+                toggleModal(addModal, true);
+            });
+            document.getElementById('close-add-modal').addEventListener('click', () => toggleModal(addModal, false));
+            document.getElementById('btn-cancel-add').addEventListener('click', () => toggleModal(addModal, false));
+
+            document.getElementById('add-book-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const saveBtn = document.getElementById('btn-save-add');
+                const spinner = document.getElementById('add-spinner');
+
+                const payload = {
+                    title: document.getElementById('add-title').value.trim(),
+                    author: document.getElementById('add-author').value.trim(),
+                    isbn: document.getElementById('add-isbn').value.trim(),
+                    description: document.getElementById('add-description').value.trim()
+                };
+
+                // Basic validation
+                if (!payload.title || !payload.author || !payload.isbn) {
+                    showToast('Title, Author, and ISBN fields are required.', 'error');
+                    return;
+                }
+
+                try {
+                    saveBtn.disabled = true;
+                    spinner.style.display = 'inline-block';
+
+                    const res = await fetch(`${API_BASE}/books/`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!res.ok) {
+                        const errData = await res.json().catch(() => ({}));
+                        throw new Error(errData.detail || 'Internal server error');
+                    }
+
+                    showToast('Book record created successfully!');
+                    toggleModal(addModal, false);
+                    await fetchCatalog();
+                } catch (err) {
+                    console.error('Error adding book:', err);
+                    showToast(`Failed to create book: ${err.message}`, 'error');
+                } finally {
+                    saveBtn.disabled = false;
+                    spinner.style.display = 'none';
+                }
+            });
+
+            // Edit Book Flow
+            function openEditModal(book) {
+                document.getElementById('edit-book-id').value = book.uid;
+                document.getElementById('edit-title').value = book.title;
+                document.getElementById('edit-author').value = book.author;
+                document.getElementById('edit-isbn').value = book.isbn;
+                document.getElementById('edit-description').value = book.description || '';
+                document.getElementById('edit-is-available').checked = book.is_available;
+
+                updateAllCounters('edit-');
+                toggleModal(editModal, true);
+            }
+            document.getElementById('close-edit-modal').addEventListener('click', () => toggleModal(editModal, false));
+            document.getElementById('btn-cancel-edit').addEventListener('click', () => toggleModal(editModal, false));
+
+            document.getElementById('edit-book-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const id = document.getElementById('edit-book-id').value;
+                const saveBtn = document.getElementById('btn-save-edit');
+                const spinner = document.getElementById('edit-spinner');
+
+                const payload = {
+                    title: document.getElementById('edit-title').value.trim(),
+                    author: document.getElementById('edit-author').value.trim(),
+                    isbn: document.getElementById('edit-isbn').value.trim(),
+                    description: document.getElementById('edit-description').value.trim()
+                };
+
+                // Basic validation
+                if (!payload.title || !payload.author || !payload.isbn) {
+                    showToast('Title, Author, and ISBN fields are required.', 'error');
+                    return;
+                }
+
+                try {
+                    saveBtn.disabled = true;
+                    spinner.style.display = 'inline-block';
+
+                    const res = await fetch(`${API_BASE}/books/${id}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!res.ok) {
+                        const errData = await res.json().catch(() => ({}));
+                        throw new Error(errData.detail || 'Internal server error');
+                    }
+
+                    showToast('Book record updated successfully!');
+                    toggleModal(editModal, false);
+                    await fetchCatalog();
+                } catch (err) {
+                    console.error('Error updating book:', err);
+                    showToast(`Failed to update book: ${err.message}`, 'error');
+                } finally {
+                    saveBtn.disabled = false;
+                    spinner.style.display = 'none';
+                }
+            });
+
+            // Delete Book Confirmation Flow
+            let activeDeleteBook = null;
+            function openDeleteModal(book) {
+                activeDeleteBook = book;
+                document.getElementById('delete-book-title-display').textContent = book.title;
+                toggleModal(deleteModal, true);
+            }
+            document.getElementById('close-delete-modal').addEventListener('click', () => toggleModal(deleteModal, false));
+            document.getElementById('btn-cancel-delete').addEventListener('click', () => toggleModal(deleteModal, false));
+
+            document.getElementById('btn-confirm-delete').addEventListener('click', async () => {
+                if (!activeDeleteBook) return;
+                const confirmBtn = document.getElementById('btn-confirm-delete');
+                const spinner = document.getElementById('delete-spinner');
+
+                try {
+                    confirmBtn.disabled = true;
+                    spinner.style.display = 'inline-block';
+
+                    const res = await fetch(`${API_BASE}/books/${activeDeleteBook.uid}`, {
+                        method: 'DELETE'
+                    });
+
+                    if (!res.ok) {
+                        const errData = await res.json().catch(() => ({}));
+                        throw new Error(errData.detail || 'Internal server error');
+                    }
+
+                    showToast('Book successfully removed from catalog.');
+                    toggleModal(deleteModal, false);
+                    await fetchCatalog();
+                } catch (err) {
+                    console.error('Error deleting book:', err);
+                    showToast(`Failed to delete book: ${err.message}`, 'error');
+                } finally {
+                    confirmBtn.disabled = false;
+                    spinner.style.display = 'none';
+                    activeDeleteBook = null;
+                }
+            });
+
+            // Change Password Trigger Flow
+            const changePasswordForm = document.getElementById('change-password-form');
+            document.getElementById('btn-change-password-trigger').addEventListener('click', () => {
+                changePasswordForm.reset();
+                toggleModal(passwordModal, true);
+            });
+            document.getElementById('close-password-modal').addEventListener('click', () => toggleModal(passwordModal, false));
+            document.getElementById('btn-cancel-password').addEventListener('click', () => toggleModal(passwordModal, false));
+
+            changePasswordForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const saveBtn = document.getElementById('btn-save-password');
+                const spinner = document.getElementById('password-spinner');
+
+                const newPassword = document.getElementById('change-new-password').value;
+                const confirmPassword = document.getElementById('change-confirm-password').value;
+
+                if (newPassword !== confirmPassword) {
+                    showToast('New passwords do not match.', 'error');
+                    return;
+                }
+
+                if (newPassword.length < 8) {
+                    showToast('Password must be at least 8 characters long.', 'error');
+                    return;
+                }
+
+                try {
+                    saveBtn.disabled = true;
+                    spinner.style.display = 'inline-block';
+
+                    const res = await fetch(`${API_BASE}/admin/change-password`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            new_password: newPassword,
+                            confirm_password: confirmPassword
+                        })
+                    });
+
+                    if (!res.ok) {
+                        const errData = await res.json().catch(() => ({}));
+                        throw new Error(errData.detail || 'Internal server error');
+                    }
+
+                    showToast('Password updated successfully!');
+                    toggleModal(passwordModal, false);
+                } catch (err) {
+                    console.error('Error changing password:', err);
+                    showToast(`Failed to update password: ${err.message}`, 'error');
+                } finally {
+                    saveBtn.disabled = false;
+                    spinner.style.display = 'none';
+                }
+            });
+
+            // Dynamic Search Box builders
+            function injectSearchInput() {
+                searchInputContainer.replaceChildren();
+
+                const isDate = searchType === 'created_at' || searchType === 'updated_at';
+
+                if (!isDate) {
+                    const iconSvg = document.createElementNS(svgNS, 'svg');
+                    iconSvg.className.baseVal = 'search-icon';
+                    iconSvg.setAttribute('fill', 'none');
+                    iconSvg.setAttribute('viewBox', '0 0 24 24');
+                    iconSvg.setAttribute('stroke', 'currentColor');
+                    iconSvg.setAttribute('stroke-width', '2');
+                    const iconPath = document.createElementNS(svgNS, 'path');
+                    iconPath.setAttribute('stroke-linecap', 'round');
+                    iconPath.setAttribute('stroke-linejoin', 'round');
+                    iconPath.setAttribute('d', 'M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z');
+                    iconSvg.appendChild(iconPath);
+                    searchInputContainer.appendChild(iconSvg);
+
+                    const input = document.createElement('input');
+                    input.type = 'text';
+                    input.className = 'search-input';
+                    input.id = 'search-text-input';
+                    input.placeholder = searchType === 'author' ? 'Search by author name...' : 'Search by book title...';
+                    input.value = searchQuery;
+                    input.addEventListener('input', (e) => {
+                        searchQuery = e.target.value;
+                        toggleClearButton();
+                        renderBooks();
+                    });
+                    searchInputContainer.appendChild(input);
+                } else {
+                    const dateGroup = document.createElement('div');
+                    dateGroup.className = 'date-filter-group';
+                    dateGroup.style.width = '100%';
+
+                    const label = document.createElement('label');
+                    label.setAttribute('for', 'search-date-input');
+                    label.textContent = 'Select Date:';
+                    dateGroup.appendChild(label);
+
+                    const input = document.createElement('input');
+                    input.type = 'date';
+                    input.id = 'search-date-input';
+                    input.className = 'date-picker-input';
+                    input.style.flexGrow = '1';
+                    input.style.width = 'auto';
+                    input.value = searchQuery;
+                    input.addEventListener('input', (e) => {
+                        searchQuery = e.target.value;
+                        toggleClearButton();
+                        renderBooks();
+                    });
+                    input.addEventListener('keydown', (e) => e.preventDefault());
+                    input.addEventListener('click', (e) => e.target.showPicker && e.target.showPicker());
+
+                    dateGroup.appendChild(input);
+                    searchInputContainer.appendChild(dateGroup);
+                }
+            }
+
+            function toggleClearButton() {
+                if (searchQuery) {
+                    btnClearSearch.style.display = 'block';
+                } else {
+                    btnClearSearch.style.display = 'none';
+                }
+            }
+
+            searchTypeSelect.addEventListener('change', (e) => {
+                searchType = e.target.value;
+                searchQuery = '';
+                toggleClearButton();
+
+                // Update helper labels
+                if (searchType === 'title') {
+                    searchHelperLabel.textContent = 'Filtering catalog by title.';
+                } else if (searchType === 'author') {
+                    searchHelperLabel.textContent = 'Filtering catalog by author.';
+                } else {
+                    searchHelperLabel.textContent = `Showing books matching the selected ${searchType === 'created_at' ? 'creation' : 'modification'} date.`;
+                }
+
+                injectSearchInput();
+                renderBooks();
+            });
+
+            btnClearSearch.addEventListener('click', () => {
+                searchQuery = '';
+                toggleClearButton();
+
+                const textInput = document.getElementById('search-text-input');
+                const dateInput = document.getElementById('search-date-input');
+                if (textInput) textInput.value = '';
+                if (dateInput) dateInput.value = '';
+
+                renderBooks();
+            });
+
+            // Close modals when clicking overlay background
+            window.addEventListener('click', (e) => {
+                if (e.target.classList.contains('modal-overlay')) {
+                    toggleModal(e.target, false);
+                }
+            });
+
+            // Initialize app
+            injectSearchInput();
+            fetchCatalog();
+        });
+    </script>
+</body>
+
+</html>
