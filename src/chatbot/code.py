@@ -46,7 +46,7 @@ def get_agent_executor():
 
             memory = ConversationBufferMemory(
                 memory_key="chat_history",      # key must match agent_kwargs input_variables
-                return_messages=True
+                return_messages=False
             )
 
             SYSTEM_PREFIX = """
@@ -66,12 +66,21 @@ NOTE: Answer briefly and to the point. DO NOT speak excessively. Format you resp
 
             toolkit = SQLDatabaseToolkit(db=db, llm=llm)
 
-            prompt = ChatPromptTemplate.from_messages([
-                ("system", SYSTEM_PREFIX),
-                MessagesPlaceholder(variable_name="chat_history"),
-                ("human", "{input}"),
-                MessagesPlaceholder(variable_name="agent_scratchpad"),
+            from langchain_core.prompts import PromptTemplate
+            from langchain_community.agent_toolkits.sql.prompt import SQL_PREFIX, SQL_SUFFIX
+            from langchain_classic.agents.mrkl.prompt import FORMAT_INSTRUCTIONS
+
+            template = "\n\n".join([
+                SYSTEM_PREFIX,
+                SQL_PREFIX,
+                "{tools}",
+                FORMAT_INSTRUCTIONS,
+                "Previous Conversation:\n{chat_history}",
+                SQL_SUFFIX
             ])
+
+            prompt = PromptTemplate.from_template(template)
+            prompt = prompt.partial(dialect=toolkit.dialect, top_k="10")
 
             _agent_executor = create_sql_agent(
                 llm=llm,
