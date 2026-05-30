@@ -76,7 +76,7 @@ NOTE: Answer briefly and to the point. DO NOT speak excessively. Format you resp
             _agent_executor = create_sql_agent(
                 llm=llm,
                 toolkit=toolkit,
-                agent_type="tool-calling",
+                agent_type="zero-shot-react-description",
                 verbose=True,
                 prompt=prompt,
                 agent_executor_kwargs={
