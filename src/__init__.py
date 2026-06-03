@@ -7,6 +7,7 @@ from src.routes.auth import auth_router
 from src.routes.admin import admin_router
 from pydantic import BaseModel
 from src.chatbot.code import get_chatbot_response
+from src.metrics import PrometheusMiddleware, metrics_handler
 
 from contextlib import asynccontextmanager
 
@@ -46,9 +47,13 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+app.add_middleware(PrometheusMiddleware)
+
 app.include_router(book_router, tags=["Books"])
 app.include_router(auth_router, tags=["Authentication"])
 app.include_router(admin_router, tags=["Admin Portal"])
+
+app.add_api_route("/metrics", metrics_handler, methods=["GET"], tags=["Metrics"])
 
 @app.get("/")
 async def index():
