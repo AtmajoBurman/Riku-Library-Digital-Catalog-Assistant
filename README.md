@@ -8,6 +8,8 @@
 ![Prometheus](https://img.shields.io/badge/Prometheus-E6522C?style=for-the-badge&logo=Prometheus&logoColor=white)
 ![Grafana](https://img.shields.io/badge/grafana-%23F46800.svg?style=for-the-badge&logo=grafana&logoColor=white)
 
+<img width="300" height="418" alt="Image" src="https://github.com/user-attachments/assets/aa07b383-4be6-4657-a985-17b9ae23aba5" />
+
 **Riku** is an enterprise-grade Library Management System equipped with an intelligent conversational assistant. By bridging state-of-the-art Large Language Models with a robust RESTful architecture, Riku enables library staff and patrons to query the catalog, discover books, and manage operations through intuitive natural language interactions.
 
 ## 🚀 Key Features
