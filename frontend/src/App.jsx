@@ -35,14 +35,14 @@ export default function App() {
         setLoading(true);
         const res = await fetch(`${API_BASE}/books/`);
         if (!res.ok) {
-          throw new Error(`Failed to fetch catalog. HTTP status: ${res.status}`);
+          throw new Error(`Oops!! We Failed to fetch catalog. HTTP status: ${res.status}`);
         }
         const data = await res.json();
         setBooks(data);
         setError(null);
       } catch (err) {
         console.error('Error fetching catalog data:', err);
-        setError('Could not connect to the library database server. Please ensure the backend is running.');
+        setError('Could not connect to the library database server. Kindly reconnect by refreshing 😊.');
       } finally {
         setLoading(false);
       }
@@ -53,7 +53,7 @@ export default function App() {
   // Client-side filtering & search processing
   const filteredBooks = useMemo(() => {
     if (!searchQuery) return books;
-    
+
     return books.filter((book) => {
       if (searchType === 'title') {
         return book.title.toLowerCase().includes(searchQuery.toLowerCase());
@@ -61,17 +61,17 @@ export default function App() {
       if (searchType === 'author') {
         return book.author.toLowerCase().includes(searchQuery.toLowerCase());
       }
-      
+
       // Date Search: match YYYY-MM-DD
       if (searchType === 'created_at' || searchType === 'updated_at') {
         const isoString = book[searchType];
         if (!isoString) return false;
-        
+
         // Extract the YYYY-MM-DD part from backend datetime string
         const itemDatePart = isoString.split('T')[0];
         return itemDatePart === searchQuery; // searchQuery is YYYY-MM-DD from datepicker
       }
-      
+
       return true;
     });
   }, [books, searchQuery, searchType]);
@@ -89,7 +89,7 @@ export default function App() {
       text: text,
       timestamp: new Date()
     };
-    
+
     setChatMessages((prev) => [...prev, userMessage]);
     setIsChatTyping(true);
 
@@ -107,14 +107,14 @@ export default function App() {
       }
 
       const data = await res.json();
-      
+
       const rikuMessage = {
         id: `riku-${Date.now()}`,
         sender: 'riku',
         text: data.response || "No response received.",
         timestamp: new Date()
       };
-      
+
       setChatMessages((prev) => [...prev, rikuMessage]);
     } catch (err) {
       console.error('Chat error:', err);
@@ -137,14 +137,14 @@ export default function App() {
   return (
     <div className="app-container">
       {/* 1. Statistics Dashboard */}
-      <Dashboard 
-        totalBooks={totalBooks} 
-        availableBooks={availableBooks} 
+      <Dashboard
+        totalBooks={totalBooks}
+        availableBooks={availableBooks}
         onAdminClick={() => { window.location.href = `${API_BASE}/login`; }}
       />
 
       {/* 2. Advanced Search Panel */}
-      <SearchBar 
+      <SearchBar
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
         searchType={searchType}
@@ -202,7 +202,7 @@ export default function App() {
       </main>
 
       {/* 4. Collapsible Chat Widget with Riku */}
-      <ChatWidget 
+      <ChatWidget
         isOpen={isChatOpen}
         setIsOpen={setIsChatOpen}
         messages={chatMessages}
