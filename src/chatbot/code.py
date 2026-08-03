@@ -1,4 +1,4 @@
-from demonstration import DEMONSTRATION_VIDEO
+from src.chatbot.demonstration import DEMONSTRATION_VIDEO
 # from langchain_huggingface import HuggingFaceEndpoint, ChatHuggingFace
 # import os
 # import logging
