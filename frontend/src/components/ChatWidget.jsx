@@ -70,7 +70,7 @@ export default function ChatWidget({ isOpen, setIsOpen, messages, onSendMessage,
                 key={msg.id} 
                 className={`chat-bubble ${msg.sender}`}
               >
-                {msg.text}
+                <div dangerouslySetInnerHTML={{ __html: msg.text }} />
                 <span className="chat-time">
                   {msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                 </span>
