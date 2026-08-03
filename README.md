@@ -8,8 +8,20 @@
 ![Prometheus](https://img.shields.io/badge/Prometheus-E6522C?style=for-the-badge&logo=Prometheus&logoColor=white)
 ![Grafana](https://img.shields.io/badge/grafana-%23F46800.svg?style=for-the-badge&logo=grafana&logoColor=white)
 
+## 🎥 Project Demonstration
+A comprehensive demonstration of the Library Management System, showcasing its features and workflow, can be viewed **[here](https://youtu.be/1anscRkBS1w?si=T8_JbIvqfUckqtWm)**.
+
+
+> [!WARNING]
+> ### 🚧 Temporary Chatbot Maintenance Notice
+>
+> LangChain is a rapidly evolving library, and some of its newer functionalities continue to change with frequent updates. Over the past few days, these changes have affected our chatbot, preventing it from generating responses as expected.
+>
+> We are actively investigating the issue and working to restore full functionality as soon as possible. We sincerely apologize for the inconvenience and greatly appreciate your patience and understanding.
+
 <img width="300" height="418" alt="Image" src="https://github.com/user-attachments/assets/aa07b383-4be6-4657-a985-17b9ae23aba5" />
 
+## 🤖 Summarizing the System 
 **Riku** is an enterprise-grade Library Management System equipped with an intelligent conversational assistant. By bridging state-of-the-art Large Language Models with a robust RESTful architecture, Riku enables library staff and patrons to query the catalog, discover books, and manage operations through intuitive natural language interactions.
 
 ## 🚀 Key Features
@@ -33,13 +45,6 @@
 - **Containerization:** **Docker** and **Docker Compose** isolate and manage the lifecycle of infrastructure services, ensuring environment consistency across development and production.
 - **Metrics Collection:** **Prometheus** periodically scrapes the backend's `/metrics` endpoint to collect time-series data such as HTTP request counts, system latency, and resource utilization.
 - **Data Visualization:** **Grafana** connects to Prometheus to provide highly customizable, real-time interactive dashboards that offer deep insights into system health and API performance.
-
-> [!WARNING]
-> ### 🚧 Temporary Chatbot Maintenance Notice
->
-> LangChain is a rapidly evolving library, and some of its newer functionalities continue to change with frequent updates. Over the past few days, these changes have affected our chatbot, preventing it from generating responses as expected.
->
-> We are actively investigating the issue and working to restore full functionality as soon as possible. We sincerely apologize for the inconvenience and greatly appreciate your patience and understanding.
 
 ## 📂 Directory Structure
 
