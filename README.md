@@ -32,6 +32,13 @@
 - **Metrics Collection:** **Prometheus** periodically scrapes the backend's `/metrics` endpoint to collect time-series data such as HTTP request counts, system latency, and resource utilization.
 - **Data Visualization:** **Grafana** connects to Prometheus to provide highly customizable, real-time interactive dashboards that offer deep insights into system health and API performance.
 
+> [!WARNING]
+> ### 🚧 Temporary Chatbot Maintenance Notice
+>
+> LangChain is a rapidly evolving library, and some of its newer functionalities continue to change with frequent updates. Over the past few days, these changes have affected our chatbot, preventing it from generating responses as expected.
+>
+> We are actively investigating the issue and working to restore full functionality as soon as possible. We sincerely apologize for the inconvenience and greatly appreciate your patience and understanding.
+
 ## 📂 Directory Structure
 
 ```text
