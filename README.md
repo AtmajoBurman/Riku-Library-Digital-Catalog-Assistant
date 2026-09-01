@@ -33,7 +33,7 @@ A comprehensive demonstration of the Library Management System, showcasing its f
 > The new implementation uses explicit tools, a read-only connection to our Neon PostgreSQL database, and stronger safety guards. This removes the deprecated dependency while improving maintainability, control, and long-term reliability.
 >
 > #### Reproducible Implementation
-> A complete, step-by-step Google Colab notebook showing the migration, tool design, and testing is available here: *(link coming soon)*
+> A complete, step-by-step Google Colab notebook showing the migration, tool design, and testing is available here: **[Google Colab Notebook Link](https://colab.research.google.com/drive/1ZHEsAQICOU3BSn1TjmqwsbylvDwBUWtt?usp=sharing)**
 
 <img width="300" height="418" alt="Image" src="https://github.com/user-attachments/assets/aa07b383-4be6-4657-a985-17b9ae23aba5" />
 
