@@ -1,7 +1,7 @@
 # Makefile to manage library backend and frontend development environment
 
 # Configuration
-PYTHON = /home/y/fastapi_tutorial/rikuenv/bin/python3
+PYTHON = myvenv/bin/python3
 FRONTEND_DIR = frontend
 
 .PHONY: help run run-backend run-frontend install build clean

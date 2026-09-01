@@ -1,120 +1,142 @@
+# =============================================================================
+# Imports
+# =============================================================================
 from src.chatbot.demonstration import DEMONSTRATION_VIDEO
-# from langchain_huggingface import HuggingFaceEndpoint, ChatHuggingFace
-# import os
-# import logging
-# from dotenv import load_dotenv
-# from langchain_community.agent_toolkits.sql.toolkit import SQLDatabaseToolkit
-# from langchain_community.utilities import SQLDatabase
-# from langchain_community.agent_toolkits import create_sql_agent
-# from langchain_classic.memory import ConversationBufferMemory
-# from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
-# import re
+from sqlalchemy import create_engine, text, inspect
+from langchain.tools import tool
+from langchain.agents import create_agent
+from langchain_groq import ChatGroq
+import os
+from dotenv import load_dotenv
+load_dotenv()
+from src.chatbot.helper_transform_pg_url import transform_pg_url
+from src.chatbot.model_name import MODEL_NAME
+from src.chatbot.system_prompt import SYSTEM_PROMPT
 
+# =============================================================================
+# Environment
+# =============================================================================
+DATABASE_URL = os.getenv("POSTGRES_URL")
+GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+DATABASE_URL = transform_pg_url(DATABASE_URL)
 
-# def strip_markdown(text):
-#     # Remove bold/italic markers
-#     text = re.sub(r'(\*{1,2}|_{1,2})(.*?)\1', r'\2', text)
-#     # Remove headings (#)
-#     text = re.sub(r'^#+\s+', '', text, flags=re.MULTILINE)
-#     return text
+# =============================================================================
+# Database connection (SQLAlchemy only)
+# =============================================================================
+engine = create_engine(
+    DATABASE_URL,
+    pool_pre_ping=True,
+    pool_recycle=300,
+)
 
-# # Set up logging
-# logger = logging.getLogger(__name__)
+# =============================================================================
+# SCHEMA = <Name>
+# =============================================================================
+SCHEMA = "library" 
 
-# load_dotenv()
+# =============================================================================
+# Helper: get schema + sample rows (replaces sample_rows_in_table_info)
+# =============================================================================
+def get_table_info(table_names: list[str] | None = None, sample_rows: int = 3) -> str:
+    insp = inspect(engine)
+    tables = table_names or insp.get_table_names(schema=SCHEMA)
+    parts = []
 
-# _agent_executor = None
+    with engine.connect() as conn:
+        for table in tables:
+            cols = insp.get_columns(table, schema=SCHEMA)
+            col_defs = ", ".join(f"{c['name']} {c['type']}" for c in cols)
+            parts.append(f"Table: {SCHEMA}.{table}\nColumns: {col_defs}")
 
-# def build_agent_executor(model_repo_id: str):
-#     from src.config.config import settings
-#     hf_api_ = os.getenv("HUGGINGFACEHUB_API_TOKEN", "").strip()
-#     db_url = settings.sync_database_url
+            try:
+                result = conn.execute(
+                    text(f'SELECT * FROM "{SCHEMA}"."{table}" LIMIT {sample_rows}')
+                )
+                rows = result.fetchall()
+                if rows:
+                    col_names = list(result.keys())
+                    sample = "\n".join("\t".join(str(v) for v in row) for row in rows)
+                    parts.append(
+                        f"/* {sample_rows} sample rows:\n"
+                        + "\t".join(col_names) + "\n" + sample + "\n*/"
+                    )
+            except Exception as e:
+                parts.append(f"(Could not fetch sample rows: {e})")
+            parts.append("")
+    return "\n".join(parts)
 
-#     if db_url.startswith("postgresql://") or db_url.startswith("postgres://"):
-#         db = SQLDatabase.from_uri(db_url, schema="library")
-#     else:
-#         db = SQLDatabase.from_uri(db_url)
+# =============================================================================
+# Tools (modern @tool style)
+# =============================================================================
+@tool
+def list_tables() -> str:
+    """Return a comma-separated list of all table names in the database."""
+    insp = inspect(engine)
+    tables = insp.get_table_names(schema=SCHEMA)
+    return ", ".join(tables)
 
-#     llm_endpoint = HuggingFaceEndpoint(
-#         repo_id=model_repo_id,
-#         huggingfacehub_api_token=hf_api_,
-#         provider="together",
-#         stop_sequences=["\nObservation:", "Observation:"],
-#         temperature=0.1
-#     )
-#     llm = ChatHuggingFace(llm=llm_endpoint)
+@tool
+def get_schema(table_names: str) -> str:
+    """Input is a comma-separated list of table names.
+    Returns schema + a few sample rows for each table.
+    Always call list_tables first to know which tables exist."""
+    names = [t.strip() for t in table_names.split(",") if t.strip()]
+    return get_table_info(names, sample_rows=3)
 
-#     memory = ConversationBufferMemory(
-#         memory_key="chat_history",
-#         return_messages=False
-#     )
+@tool
+def execute_sql(query: str) -> str:
+    """Execute a READ-ONLY SQL query and return the results.
+    Only SELECT / WITH queries are allowed."""
+    cleaned = query.strip().lower()
+    if not (cleaned.startswith("select") or cleaned.startswith("with")):
+        return "ERROR: Only SELECT or WITH queries are allowed."
 
-#     SYSTEM_PREFIX = """
-# You are a helpful assistant working for a library management software.
-# Your name is Riku.
-# You help library staff and members with queries about books, members, 
-# borrowing history, fines, and availability.
+    try:
+        with engine.connect() as conn:
+            # Make sure the search_path includes the library schema
+            conn.execute(text(f'SET search_path TO "{SCHEMA}", public'))
+            result = conn.execute(text(query))
+            rows = result.fetchall()
+            return str(rows[:50]) if rows else "No rows returned."
+    except Exception as e:
+        return f"Error executing query: {e}"
 
-# If the user asks something related to the library database, query it and answer.
-# If the user asks a general question or greets you, respond conversationally 
-# and politely without querying the database.
-# If the user asks something completely outside the library domain, 
-# politely say it is outside your scope.
+tools = [list_tables, get_schema, execute_sql]
 
-# CRITICAL INSTRUCTION:
-# When using a tool, output only:
-# Action: <tool_name>
-# Action Input: <input>
-# Do not write "Observation:" or simulate results.
+# =============================================================================
+# LLM
+# =============================================================================
+llm = ChatGroq(
+    model=MODEL_NAME,
+    temperature=1,
+)
 
-# When giving your final answer, output:
-# Final Answer: <your response>
+# =============================================================================
+# Create the modern agent
+# =============================================================================
+agent = create_agent(
+    model=llm,
+    tools=tools,
+    system_prompt=SYSTEM_PROMPT,
+)
 
-# NOTE: Answer briefly and to the point. Format your response in plain ENGLISH TEXT without markdown.
-# """
+# =============================================================================
+# Ask the agent
+# =============================================================================
+def ask(question: str):
+    """Ask a natural language question to the SQL agent."""
+    result = agent.invoke({
+        "messages": [
+            {"role": "user", "content": question}
+        ]
+    })
 
-#     toolkit = SQLDatabaseToolkit(db=db, llm=llm)
+    # The final answer is the last message from the agent
+    return result["messages"][-1].content
 
-#     from langchain_core.prompts import PromptTemplate
-#     from langchain_community.agent_toolkits.sql.prompt import SQL_PREFIX, SQL_SUFFIX
-#     from langchain_classic.agents.mrkl.prompt import FORMAT_INSTRUCTIONS
-
-#     template = "\n\n".join([
-#         SYSTEM_PREFIX,
-#         SQL_PREFIX,
-#         "{tools}",
-#         FORMAT_INSTRUCTIONS,
-#         "Previous Conversation:\n{chat_history}",
-#         SQL_SUFFIX
-#     ])
-
-#     prompt = PromptTemplate.from_template(template)
-#     prompt = prompt.partial(dialect=toolkit.dialect, top_k="10")
-
-#     return create_sql_agent(
-#         llm=llm,
-#         toolkit=toolkit,
-#         agent_type="zero-shot-react-description",
-#         verbose=True,
-#         prompt=prompt,
-#         max_iterations=5,
-#         agent_executor_kwargs={
-#             "handle_parsing_errors": True,
-#             "handle_tool_error": True,
-#             "memory": memory
-#         }
-#     )
-
-# def get_agent_executor(model_name: str = "meta-llama/Llama-3.3-70B-Instruct"):
-#     global _agent_executor
-#     if _agent_executor is None:
-#         try:
-#             _agent_executor = build_agent_executor(model_name)
-#         except Exception as e:
-#             logger.error(f"Error initializing chatbot agent executor with {model_name}: {e}", exc_info=True)
-#             raise e
-#     return _agent_executor
-
+# =============================================================================
+# Get chatbot response
+# =============================================================================
 def get_chatbot_response(user_input: str) -> str:
     """
     Chatbot temporarily disabled.
@@ -122,29 +144,12 @@ def get_chatbot_response(user_input: str) -> str:
     """
 
     link = DEMONSTRATION_VIDEO  # Replace with your actual demo/video URL
-
-    return (
-        "This feature is currently under maintenance. Visitors are requested to bear with us. "
-        f"You are requested to view this: <a href='{link}' target='_blank' style='color: blue; text-decoration: none;'>Demonstration Video</a> to understand how this Library Management System actually works. "
-        "Thank you for your patience."
-    )
-#     """
-#     Invokes the chatbot agent with the given user input and returns the generated text response.
-#     Falls back to secondary model if primary model hits credit limits or HTTP errors.
-#     """
-#     primary_model = "meta-llama/Llama-3.3-70B-Instruct"
-#     fallback_model = "Qwen/Qwen2.5-Coder-32B-Instruct"
-
-#     try:
-#         agent = get_agent_executor(primary_model)
-#         response = agent.invoke({"input": user_input})
-#         return strip_markdown(response.get("output", "No response generated."))
-#     except Exception as e:
-#         logger.warning(f"Primary model ({primary_model}) failed: {e}. Trying fallback model ({fallback_model})...")
-#         try:
-#             fallback_agent = build_agent_executor(fallback_model)
-#             response = fallback_agent.invoke({"input": user_input})
-#             return strip_markdown(response.get("output", "No response generated."))
-#         except Exception as fallback_err:
-#             logger.error(f"Fallback model also failed: {fallback_err}", exc_info=True)
-#             return "I encountered an error while processing your request. Please try again later."
+    try:
+        return ask(user_input)
+    except Exception as e:
+        print("Error from SQL agent:", e)
+        return (
+            "It seems we have run into a problem, we are trying to fix this and we apologize for the inconvenience. "
+            f"In the meantime, you can view this: <a href='{link}' target='_blank' style='color: blue; text-decoration: none;'>Demonstration Video</a> to understand how this Library Management System actually works. "
+            "Thank you for your patience."
+        )
