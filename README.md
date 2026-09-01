@@ -12,12 +12,28 @@
 A comprehensive demonstration of the Library Management System, showcasing its features and workflow, can be viewed **[here](https://youtu.be/1anscRkBS1w?si=T8_JbIvqfUckqtWm)**.
 
 
-> [!WARNING]
-> ### 🚧 Temporary Chatbot Maintenance Notice
+> [!NOTE]
+> ### ✅ Chatbot Issue Resolved
 >
-> LangChain is a rapidly evolving library, and some of its newer functionalities continue to change with frequent updates. Over the past few days, these changes have affected our chatbot, preventing it from generating responses as expected.
+> We are glad to announce that the chatbot reliability issue has been **fully resolved**.
 >
-> We are actively investigating the issue and working to restore full functionality as soon as possible. We sincerely apologize for the inconvenience and greatly appreciate your patience and understanding.
+> #### What was happening
+> The previous implementation relied on the `langchain-community` package (specifically its SQL agent utilities and toolkit). This package was officially **sunset and archived** by the LangChain team in mid-2026. As a result, the chatbot began encountering compatibility and maintenance problems that affected stability and future-proofing.
+>
+> #### What we were using
+> - Llama-family models served via the **Hugging Face Inference API**
+> - LangChain SQL agent built on top of `langchain-community`
+>
+> #### What we are using now
+> - OpenAI GPT-OSS models served via the **Groq API** ⚡
+> - A modern agent architecture built with the current LangChain stack:
+>   - `langchain` · `langchain-groq` · `sqlalchemy`
+>   - Fully custom, tightly scoped tools — **no dependency on `langchain-community`**
+>
+> The new implementation uses explicit tools, a read-only connection to our Neon PostgreSQL database, and stronger safety guards. This removes the deprecated dependency while improving maintainability, control, and long-term reliability.
+>
+> #### Reproducible Implementation
+> A complete, step-by-step Google Colab notebook showing the migration, tool design, and testing is available here: *(link coming soon)*
 
 <img width="300" height="418" alt="Image" src="https://github.com/user-attachments/assets/aa07b383-4be6-4657-a985-17b9ae23aba5" />
 
@@ -26,7 +42,7 @@ A comprehensive demonstration of the Library Management System, showcasing its f
 
 ## 🚀 Key Features
 
-- **AI-Powered Natural Language Interface:** Utilizes LangChain and the Llama-3.3-70B-Instruct model to translate conversational prompts into precise, secure SQL queries.
+- **AI-Powered Natural Language Interface:** Utilizes LangChain with OpenAI GPT-OSS models served via the **Groq API** to translate conversational prompts into precise, secure SQL queries.
 - **High-Performance REST API:** Built on FastAPI with asynchronous endpoints, comprehensive Pydantic validation, and automated OpenAPI documentation.
 - **Modern React Web Application:** A responsive and dynamic frontend built with React 19 and Vite.
 - **Industry-Standard Security:** Features double-submit CSRF protection, secure `httpOnly` JWT session management, and granular Role-Based Access Control (RBAC).
@@ -38,7 +54,7 @@ A comprehensive demonstration of the Library Management System, showcasing its f
 - **Backend:** [FastAPI](https://fastapi.tiangolo.com/) (Python)
 - **Frontend:** [React 19](https://react.dev/), [Vite](https://vitejs.dev/)
 - **Database & ORM:** PostgreSQL, [SQLModel](https://sqlmodel.tiangolo.com/), SQLAlchemy, asyncpg
-- **AI & NLP:** [LangChain](https://langchain.com/), LangGraph, HuggingFace Hub (`meta-llama/Llama-3.3-70B-Instruct`)
+- **AI & NLP:** [LangChain](https://langchain.com/), LangGraph, [Groq API](https://groq.com/) (`langchain-groq`)
 - **Security:** bcrypt, python-jose (JWT)
 
 ### Infrastructure & Observability
@@ -107,17 +123,17 @@ graph TD
 - Node.js 18+ and npm
 - PostgreSQL database
 - Docker & Docker Compose (for the observability stack)
-- Hugging Face API Token (for the Llama 3 model)
+- Groq API Key (for the LLM inference — get one at [console.groq.com](https://console.groq.com))
 
 ### 1. Environment Configuration
 
 Clone the repository and set up your `.env` file in the project root:
 
 ```env
-HUGGINGFACEHUB_API_TOKEN=your_hf_token_here
-DATABASE_URL=postgresql+asyncpg://user:password@localhost:5432/library_db
-SYNC_DATABASE_URL=postgresql://user:password@localhost:5432/library_db
+GROQ_API_KEY=your_groq_api_key_here
+POSTGRES_URL=postgresql+asyncpg://user:password@localhost:5432/library_db
 ALLOWED_ORIGINS=http://localhost:5173
+JWT_SECRET_KEY=your_secret_key_here
 ```
 
 ### 2. Install Dependencies
