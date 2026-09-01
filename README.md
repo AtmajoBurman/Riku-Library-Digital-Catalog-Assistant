@@ -9,11 +9,11 @@
 ![Grafana](https://img.shields.io/badge/grafana-%23F46800.svg?style=for-the-badge&logo=grafana&logoColor=white)
 
 ## 🎥 Project Demonstration
-A comprehensive demonstration of the Library Management System, showcasing its features and workflow, can be viewed **[here](https://youtu.be/1anscRkBS1w?si=T8_JbIvqfUckqtWm)**.
+A comprehensive demonstration of the Library Management System, showcasing its features and workflow, can be viewed **[on this YOUTUBE video link](https://youtu.be/1anscRkBS1w?si=T8_JbIvqfUckqtWm)**.
 
 
 > [!NOTE]
-> ### ✅ Chatbot Issue Resolved
+> ### ✅ Chatbot Issue Resolved (Average Response Time reduced from ~10s to ~2s cold start and ~1s after that)
 >
 > We are glad to announce that the chatbot reliability issue has been **fully resolved**.
 >
